@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#102a43">
+<title>أكاديمية المساحة و GIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--navy:#102a43;--blue:#1769aa;--teal:#0f9d8a;--gold:#f2b84b;--bg:#f3f7fb;--card:#fff;--text:#203040;--muted:#64748b;--line:#e3eaf1}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Cairo",sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,#102a43,#1769aa);color:white;padding:22px 5%;position:relative;overflow:hidden}
+header:after{content:"";position:absolute;width:260px;height:260px;border:35px solid #ffffff12;border-radius:50%;left:-70px;top:-120px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;position:relative;z-index:1}.brand{font-size:1.35rem;font-weight:800}.brand span{color:#ffd27a}
+nav{display:flex;gap:8px;flex-wrap:wrap}nav a{color:white;text-decoration:none;padding:7px 11px;border-radius:9px;font-size:.9rem}nav a:hover{background:#ffffff20}
+.hero{max-width:900px;padding:44px 0 28px;position:relative;z-index:1}.hero h1{font-size:clamp(1.8rem,4vw,3rem);margin:0 0 10px}.hero p{line-height:1.9;color:#e5eef7;max-width:720px}
+.btn{border:0;border-radius:10px;padding:10px 17px;background:var(--teal);color:white;font:inherit;font-weight:700;cursor:pointer}.btn:hover{filter:brightness(.95)}.btn.secondary{background:#eaf2f8;color:var(--navy)}.btn.gold{background:var(--gold);color:#263238}
+.container{width:min(1120px,92%);margin:28px auto}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:15px}.section-head h2{margin:0;color:var(--navy);font-size:1.45rem}.section-head p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 18px #183b5510}.card h3{margin:8px 0;color:var(--navy)}.card p{color:var(--muted);line-height:1.8;margin:7px 0 14px}.icon{font-size:1.8rem}.tag{display:inline-block;background:#e8f5f3;color:#08796b;padding:3px 9px;border-radius:30px;font-size:.78rem}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.toolbar input,.toolbar select,.field{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:white;min-width:160px}
+.lesson-list{display:grid;gap:10px}.lesson{display:flex;align-items:center;justify-content:space-between;gap:12px;background:white;border:1px solid var(--line);border-radius:12px;padding:13px 15px}.lesson strong{color:var(--navy)}.lesson small{color:var(--muted)}
+.panel{display:none;background:white;border:1px solid var(--line);padding:20px;border-radius:15px;margin-top:14px;line-height:2}.panel.show{display:block}.panel h3{color:var(--navy)}
+#map{height:330px;border-radius:14px;border:1px solid var(--line);z-index:0}
+label{display:block;font-weight:700;margin:10px 0 5px}.field{width:100%;max-width:420px}.result{font-weight:800;color:var(--teal);margin-top:12px}
+footer{background:var(--navy);color:#dbe7f2;text-align:center;padding:25px;margin-top:45px}
+.notice{background:#fff8e7;border:1px solid #f5dfaa;padding:12px 15px;border-radius:12px;color:#725313;line-height:1.8}
+@media(max-width:650px){.top{align-items:flex-start;flex-direction:column}.hero{padding-top:30px}.lesson{align-items:flex-start;flex-direction:column}.section-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand">🎓 أكاديمية <span>المساحة و GIS</span></div>
+    <nav>
+      <a href="#home">الرئيسية</a><a href="#courses">الكورسات</a><a href="#lessons">الدروس</a><a href="#tools">الأدوات</a><a href="#map-section">الخريطة</a><a href="#quiz">اختبر نفسك</a>
+    </nav>
+  </div>
+  <div class="hero" id="home">
+    <h1>ابدأ رحلتك في عالم المساحة ونظم المعلومات الجغرافية</h1>
+    <p>منصة تعليمية عربية تساعدك على فهم مبادئ المساحة، وأجهزة الرفع المساحي، ونظم المعلومات الجغرافية والاستشعار عن بُعد، من الأساسيات إلى التطبيق العملي.</p>
+    <a href="#courses"><button class="btn gold">استكشف الكورسات</button></a>
+  </div>
+</header>
+
+<main class="container">
+<section id="courses">
+  <div class="section-head"><div><h2>المسارات التعليمية</h2><p>اختر المجال الذي تريد البدء فيه</p></div></div>
+  <div class="grid" id="courseGrid">
+    <article class="card"><div class="icon">🗺️</div><span class="tag">GIS</span><h3>نظم المعلومات الجغرافية</h3><p>تعرف على البيانات المكانية والطبقات والتحليل المكاني وبرامج GIS.</p><button class="btn" onclick="filterLessons('gis')">عرض الدروس</button></article>
+    <article class="card"><div class="icon">📐</div><span class="tag">Surveying</span><h3>أعمال المساحة</h3><p>تعلم مبادئ القياس والميزانية والترافيرس وأجهزة المحطة الشاملة.</p><button class="btn" onclick="filterLessons('survey')">عرض الدروس</button></article>
+    <article class="card"><div class="icon">🛰️</div><span class="tag">Remote Sensing</span><h3>الاستشعار عن بُعد</h3><p>افهم الصور الفضائية والأقمار الصناعية والمؤشرات الطيفية.</p><button class="btn" onclick="filterLessons('remote')">عرض الدروس</button></article>
+    <article class="card"><div class="icon">💻</div><span class="tag">CAD</span><h3>الرسم الهندسي وCAD</h3><p>مقدمة في الرسم الهندسي والخرائط والملفات المستخدمة في الأعمال المساحية.</p><button class="btn" onclick="filterLessons('cad')">عرض الدروس</button></article>
+  </div>
+</section>
+
+<section id="lessons" style="margin-top:38px">
+  <div class="section-head"><div><h2>مكتبة الدروس</h2><p>اختر درسًا لعرض محتواه التعليمي</p></div><button class="btn secondary" onclick="filterLessons('all')">عرض الكل</button></div>
+  <div class="toolbar">
+    <input id="lessonSearch" type="search" placeholder="ابحث عن درس..." oninput="renderLessons()">
+    <select id="lessonFilter" onchange="renderLessons()"><option value="all">كل المجالات</option><option value="gis">GIS</option><option value="survey">المساحة</option><option value="remote">الاستشعار عن بُعد</option><option value="cad">CAD</option></select>
+  </div>
+  <div class="lesson-list" id="lessonList"></div>
+  <div class="panel" id="lessonPanel"></div>
+</section>
+
+<section id="tools" style="margin-top:38px">
+  <div class="section-head"><div><h2>أدوات وحاسبات تعليمية</h2><p>تطبيقات مبسطة للتدريب على المفاهيم الأساسية</p></div></div>
+  <div class="grid">
+    <div class="card"><div class="icon">📏</div><h3>حساب فرق المناسيب</h3><p>أدخل قراءة القامة الخلفية والأمامية لحساب فرق المنسوب.</p>
+      <label for="bs">القراءة الخلفية BS</label><input class="field" id="bs" type="number" step="any" placeholder="مثال: 1.455">
+      <label for="fs">القراءة الأمامية FS</label><input class="field" id="fs" type="number" step="any" placeholder="مثال: 0.985">
+      <button class="btn" style="margin-top:12px" onclick="calcLevel()">احسب الفرق</button><div class="result" id="levelResult" aria-live="polite"></div>
+    </div>
+    <div class="card"><div class="icon">📍</div><h3>المسافة بين نقطتين</h3><p>حساب المسافة الأفقية من إحداثيات X وY على مستوى مستوٍ.</p>
+      <label for="x1">X للنقطة الأولى</label><input class="field" id="x1" type="number" step="any">
+      <label for="y1">Y للنقطة الأولى</label><input class="field" id="y1" type="number" step="any">
+      <label for="x2">X للنقطة الثانية</label><input class="field" id="x2" type="number" step="any">
+      <label for="y2">Y للنقطة الثانية</label><input class="field" id="y2" type="number" step="any">
+      <button class="btn" style="margin-top:12px" onclick="calcDistance()">احسب المسافة</button><div class="result" id="distanceResult" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section id="map-section" style="margin-top:38px">
+  <div class="section-head"><div><h2>خريطة تفاعلية تعليمية</h2><p>استكشف الخريطة وحركها وقم بالتكبير والتصغير</p></div></div>
+  <div id="map"></div>
+  <p class="notice">الخريطة تستخدم بيانات خرائط مفتوحة وتتطلب اتصالًا بالإنترنت لتحميل طبقات الخريطة.</p>
+</section>
+
+<section id="quiz" style="margin-top:38px">
+  <div class="section-head"><div><h2>اختبر معلوماتك</h2><p>أسئلة قصيرة لمراجعة الأساسيات</p></div></div>
+  <div class="card">
+    <div id="quizArea"></div>
+    <div class="toolbar"><button class="btn" id="nextQuestion" onclick="nextQuestion()">السؤال التالي</button><button class="btn secondary" onclick="restartQuiz()">إعادة الاختبار</button></div>
+    <div class="result" id="quizScore" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="glossary" style="margin-top:38px">
+  <div class="section-head"><div><h2>قاموس المصطلحات</h2><p>مصطلحات أساسية بالعربية والإنجليزية</p></div></div>
+  <div class="grid">
+    <div class="card"><strong>Coordinate</strong><p>إحداثي: قيمة رقمية تحدد موقع نقطة.</p></div>
+    <div class="card"><strong>Latitude</strong><p>خط العرض: يحدد الموقع شمال أو جنوب خط الاستواء.</p></div>
+    <div class="card"><strong>Longitude</strong><p>خط الطول: يحدد الموقع شرق أو غرب خط جرينتش.</p></div>
+    <div class="card"><strong>Scale</strong><p>مقياس الرسم: العلاقة بين المسافة على الخريطة والمسافة على الطبيعة.</p></div>
+    <div class="card"><strong>Contour</strong><p>خط كنتور: خط يصل بين نقاط لها نفس المنسوب.</p></div>
+    <div class="card"><strong>Raster</strong><p>بيانات نقطية: بيانات مكانية تتكون من خلايا أو بكسلات.</p></div>
+  </div>
+</section>
+
+<section id="resources" style="margin-top:38px">
+  <div class="section-head"><div><h2>مصادر ومراجع للتعلم</h2><p>روابط رسمية للرجوع إلى التوثيق والمصادر</p></div></div>
+  <div class="grid">
+    <div class="card"><h3>ArcGIS Documentation</h3><p>الوثائق الرسمية لبرامج ArcGIS وأدوات التحليل.</p><a href="https://pro.arcgis.com/" target="_blank" rel="noopener">زيارة الموقع</a></div>
+    <div class="card"><h3>QGIS Documentation</h3><p>دليل استخدام برنامج QGIS مفتوح المصدر.</p><a href="https://docs.qgis.org/" target="_blank" rel="noopener">زيارة الموقع</a></div>
+    <div class="card"><h3>USGS EarthExplorer</h3><p>منصة للبحث عن بيانات وصور الأقمار الصناعية.</p><a href="https://earthexplorer.usgs.gov/" target="_blank" rel="noopener">زيارة الموقع</a></div>
+  </div>
+</section>
+
+<section id="community" style="margin-top:38px">
+  <div class="card"><h2>مجتمع المتعلمين</h2><p>استخدم المساحة التالية لتدوين سؤال أو نقطة تريد مراجعتها. تُحفظ الملاحظات على جهازك فقط من خلال المتصفح.</p>
+    <textarea id="communityNote" class="field" style="max-width:100%;min-height:90px" placeholder="اكتب ملاحظتك أو سؤالك هنا..."></textarea>
+    <button class="btn" style="margin-top:10px" onclick="saveNote()">حفظ الملاحظة على هذا الجهاز</button>
+    <div id="savedNote" class="result"></div>
+  </div>
+</section>
+</main>
+<footer>© <span id="year"></span> أكاديمية المساحة و GIS — التعلم خطوة بخطوة</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const lessons = [
+ {id:1,cat:"gis",title:"ما هي نظم المعلومات الجغرافية GIS؟",level:"مبتدئ",body:"<h3>مفهوم GIS</h3><p>نظم المعلومات الجغرافية هي منظومة لجمع البيانات المرتبطة بمواقع جغرافية وتخزينها وإدارتها وتحليلها وعرضها في صورة خرائط ومعلومات تساعد على اتخاذ القرار.</p><h3>مكونات GIS</h3><ul><li>الأجهزة Hardware</li><li>البرمجيات Software</li><li>البيانات Data</li><li>الأفراد People</li><li>الأساليب والإجراءات Methods</li></ul><h3>أمثلة للاستخدام</h3><p>تخطيط المدن، توزيع الخدمات، إدارة المرافق، ودراسة التغيرات البيئية.</p>"},
+ {id:2,cat:"gis",title:"أنواع البيانات المكانية",level:"مبتدئ",body:"<h3>البيانات المتجهة Vector</h3><p>تمثل المعالم باستخدام النقاط والخطوط والمضلعات؛ مثل مواقع المدارس والطرق وحدود المحافظات.</p><h3>البيانات النقطية Raster</h3><p>تتكون من شبكة خلايا، وتستخدم في الصور الفضائية ونماذج الارتفاعات والظواهر المستمرة.</p>"},
+ {id:3,cat:"gis",title:"الطبقات والجداول والسمات",level:"مبتدئ",body:"<h3>الطبقات Layers</h3><p>كل طبقة تمثل نوعًا من المعالم، مثل الطرق أو المباني أو استخدامات الأرض.</p><h3>جدول السمات</h3><p>يحتوي على معلومات وصفية مرتبطة بكل معلم، مثل الاسم أو النوع أو المساحة.</p>"},
+ {id:4,cat:"survey",title:"مقدمة في علم المساحة",level:"مبتدئ",body:"<h3>تعريف المساحة</h3><p>علم يختص بتحديد المواقع النسبية للنقاط على سطح الأرض وقياس المسافات والاتجاهات والمناسيب، ثم تمثيل النتائج على خرائط أو مخططات.</p><h3>فروع المساحة</h3><ul><li>المساحة المستوية</li><li>المساحة الجيوديسية</li><li>المساحة الطبوغرافية</li><li>المساحة الهندسية</li></ul>"},
+ {id:5,cat:"survey",title:"أعمال الميزانية Leveling",level:"مبتدئ",body:"<h3>فكرة الميزانية</h3><p>تهدف إلى تحديد فروق المناسيب بين النقاط باستخدام جهاز الميزان والقامة.</p><h3>القراءات</h3><p>القراءة الخلفية BS والقراءة الأمامية FS، وفرق المنسوب يساوي BS ناقص FS وفق اصطلاح الإشارة المستخدم.</p><p>إذا كانت النتيجة موجبة تكون النقطة الأمامية أعلى من نقطة الجهاز المرجعية في هذا الحساب، وإذا كانت سالبة تكون أقل.</p>"},
+ {id:6,cat:"survey",title:"المحطة الشاملة Total Station",level:"متوسط",body:"<h3>ما هي المحطة الشاملة؟</h3><p>جهاز مساحي إلكتروني يجمع قياس الزوايا والمسافات، ويمكنه حساب الإحداثيات وتخزين النقاط.</p><h3>مكونات العمل</h3><p>إعداد الجهاز فوق نقطة معلومة، ضبط التمركز والتسوية، إدخال بيانات المحطة والتوجيه، ثم رصد النقاط والتحقق من النتائج.</p>"},
+ {id:7,cat:"remote",title:"مقدمة في الاستشعار عن بُعد",level:"مبتدئ",body:"<h3>مفهوم الاستشعار عن بُعد</h3><p>هو الحصول على معلومات عن الأجسام أو الظواهر دون التلامس المباشر معها، غالبًا باستخدام مستشعرات محمولة على الأقمار الصناعية أو الطائرات.</p><h3>مصادر البيانات</h3><p>تشمل الأقمار الصناعية والطائرات والمنصات الجوية، وتختلف البيانات في الدقة المكانية والطيفية والزمنية والإشعاعية.</p>"},
+ {id:8,cat:"remote",title:"أنواع البيانات والصور الفضائية",level:"مبتدئ",body:"<h3>أنواع البيانات</h3><p>تختلف الصور الفضائية حسب المستشعر ونطاقات الطيف وطريقة الالتقاط.</p><h3>الدقة المكانية والطيفية والزمنية</h3><p>الدقة المكانية تتعلق بحجم البكسل على الأرض، والطيفية بعدد ونطاق الحزم، والزمنية بمعدل إعادة زيارة المنطقة.</p><h3>أنواع الدقة</h3><p>تساعد معرفة أنواع الدقة على اختيار الصورة المناسبة لهدف الدراسة.</p>"},
+ {id:9,cat:"cad",title:"مقدمة في الرسم باستخدام CAD",level:"مبتدئ",body:"<h3>ما هو CAD؟</h3><p>التصميم بمساعدة الحاسوب يستخدم لإنتاج الرسومات الهندسية والمخططات بدقة.</p><h3>أوامر أساسية</h3><p>Line لرسم خط، Circle لرسم دائرة، Offset لإنشاء خط موازٍ، Trim لقص الأجزاء الزائدة، وSave لحفظ العمل.</p>"}
+];
+const catNames={gis:"GIS",survey:"المساحة",remote:"الاستشعار عن بُعد",cad:"CAD"};
+function renderLessons(){
+ const q=(document.getElementById("lessonSearch").value||"").trim().toLowerCase();
+ const cat=document.getElementById("lessonFilter").value;
+ const list=lessons.filter(l=>(cat==="all"||l.cat===cat)&&l.title.toLowerCase().includes(q));
+ const box=document.getElementById("lessonList");
+ box.innerHTML=list.length?list.map(l=>`<div class="lesson"><div><strong>${l.title}</strong><br><small>${catNames[l.cat]} • ${l.level}</small></div><button class="btn" onclick="openLesson(${l.id})">افتح الدرس</button></div>`).join(""):"<p>لا توجد دروس مطابقة لبحثك.</p>";
+}
+function filterLessons(cat){document.getElementById("lessonFilter").value=cat;renderLessons();document.getElementById("lessons").scrollIntoView({behavior:"smooth"});}
+function openLesson(id){const l=lessons.find(x=>x.id===id);if(!l)return;const p=document.getElementById("lessonPanel");p.innerHTML=`<h3>${l.title}</h3><span class="tag">${catNames[l.cat]} — ${l.level}</span>${l.body}`;p.classList.add("show");p.scrollIntoView({behavior:"smooth",block:"nearest"});}
+function calcLevel(){const bs=Number(document.getElementById("bs").value),fs=Number(document.getElementById("fs").value);if(document.getElementById("bs").value===""||document.getElementById("fs").value===""){document.getElementById("levelResult").textContent="من فضلك أدخل القراءتين.";return;}document.getElementById("levelResult").textContent="فرق المنسوب (BS − FS) = "+(bs-fs).toFixed(3)+" متر";}
+function calcDistance(){let ids=["x1","y1","x2","y2"],v=ids.map(id=>document.getElementById(id).value);if(v.some(x=>x==="")){document.getElementById("distanceResult").textContent="أدخل الإحداثيات الأربعة أولًا.";return;}let [x1,y1,x2,y2]=v.map(Number);let d=Math.hypot(x2-x1,y2-y1);document.getElementById("distanceResult").textContent="المسافة الأفقية = "+d.toFixed(3)+" وحدة إحداثيات";}
+const questions=[
+ {q:"أي نوع من البيانات يمثل الطرق والحدود باستخدام خطوط ومضلعات؟",a:["Raster","Vector","Audio"],c:1,why:"البيانات المتجهة Vector تمثل المعالم بالنقاط والخطوط والمضلعات."},
+ {q:"ماذا يعني الاختصار GIS؟",a:["نظم المعلومات الجغرافية","نظام تحديد السرعة","جهاز قياس المسافة"],c:0,why:"GIS تعني Geographic Information Systems."},
+ {q:"ما القراءة التي يرمز لها BS في الميزانية؟",a:["قراءة أمامية","قراءة خلفية","قراءة جانبية"],c:1,why:"BS هي Back Sight أي القراءة الخلفية."},
+ {q:"أي مما يلي يعد مصدرًا شائعًا لبيانات الاستشعار عن بُعد؟",a:["الأقمار الصناعية","لوحة المفاتيح","الطابعة"],c:0,why:"تلتقط المستشعرات على الأقمار الصناعية صورًا وبيانات عن سطح الأرض."}
+];
+let qi=0,score=0,answered=false;
+function showQuestion(){const q=questions[qi];answered=false;document.getElementById("quizArea").innerHTML=`<h3>السؤال ${qi+1} من ${questions.length}</h3><p><strong>${q.q}</strong></p>${q.a.map((a,i)=>`<label style="font-weight:400"><input type="radio" name="answer" value="${i}"> ${a}</label>`).join("")}<div id="feedback" class="result"></div>`;document.getElementById("quizScore").textContent="";}
+function nextQuestion(){if(!answered){const selected=document.querySelector('input[name="answer"]:checked');if(!selected){document.getElementById("feedback").textContent="اختر إجابة أولًا.";return;}const q=questions[qi],ok=Number(selected.value)===q.c;if(ok)score++;document.getElementById("feedback").textContent=(ok?"إجابة صحيحة! ":"إجابة غير صحيحة. ")+q.why;answered=true;document.getElementById("nextQuestion").textContent=qi===questions.length-1?"عرض النتيجة":"التالي";return;}if(qi<questions.length-1){qi++;showQuestion();document.getElementById("nextQuestion").textContent="السؤال التالي";}else{document.getElementById("quizArea").innerHTML="<h3>انتهى الاختبار</h3>";document.getElementById("quizScore").textContent=`نتيجتك: ${score} من ${questions.length}`;document.getElementById("nextQuestion").textContent="انتهى";document.getElementById("nextQuestion").disabled=true;}}
+function restartQuiz(){qi=0;score=0;document.getElementById("nextQuestion").disabled=false;document.getElementById("nextQuestion").textContent="السؤال التالي";showQuestion();}
+function saveNote(){const note=document.getElementById("communityNote").value;try{localStorage.setItem("gisAcademyNote",note);document.getElementById("savedNote").textContent="تم حفظ الملاحظة على هذا الجهاز."; }catch(e){document.getElementById("savedNote").textContent="تعذر الحفظ في هذا المتصفح.";}}
+document.getElementById("year").textContent=new Date().getFullYear();
+renderLessons();showQuestion();
+try{document.getElementById("communityNote").value=localStorage.getItem("gisAcademyNote")||"";}catch(e){}
+if(window.L){const map=L.map("map").setView([30.5877,31.502],11);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:'&copy; OpenStreetMap contributors',maxZoom:19}).addTo(map);L.marker([30.5877,31.502]).addTo(map).bindPopup("الزقازيق — مثال تعليمي").openPopup();}
+</script>
+</body>
+</html>
