@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text, create_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-from app.core.config import settings
+from config import settings
 
 engine = create_engine(
     settings.DATABASE_URL,
